@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="fi"><head><title>Chrome & Chromium bug report</title></head><body><h1>A Chrome & Chromium bug report regarding anchored scroll positioning over reloads</h1>
+<p>This is a report about a bug that causes the browser lose the proper position of the viewport upon a reload of a page. I suspect the problem is some kind of race condition between the scrollbars of the outer and the inner scroll area. <a href="https://stackoverflow.com/questions/43909940/why-does-overflowhidden-prevent-positionsticky-from-working">Sometimes</a> it is not desirable to have the outer scrollbar mandatorily hidden and this behavior becomes a problem.</p>
+<p>Feel free to contact me at <a href="mailto:scrollbug@miettii.net">scrollbug@miettii.net</a> for help on pinpointing the bug.</p>
+<p>This page was created at 2021-03-17.</p>
+<h2>Description of the problem</h2>
+<p>If, on a 100% height html page, we have an anchor to an element in a 100 % wrapper div with its overflow-y property set to <i>auto</i> or <i>scroll</i>, the scroll position is not preserved when reloading the page or going back and forth in the page history.</p>
+<pre>html, body, .wrapper {
+  height: 100%;
+  /* margin: 0; */
+}
+.wrapper {
+  overflow-y: scroll;
+}</pre>
+<p>For some unknown reason the bug is reproducible only on the localhost, if the document does not contain the following script tag.</p>
+<pre>&lt;script type="module"&gt;
+&lt;/script&gt;</pre>
+<p>The bug occurs also with "margin: 0" on the containers, but I think having the dual scrollbars visible gives a better initial hunch about the problem.</p>
+
+<h2>Steps to reproduce</h2>
+<p><ol>
+  <li><p>Resize this browser window to a reasonably small size to have the need for scrollbars in the next step.</p></li>
+  <li><p>Click this <a href="demo.html#anelement">link to demo</a>. See that the viewport is properly scrolled to the anchor.</p></li>
+  <li><p>The following steps A and B are alternative methods. The method B consists of two substeps.</p>
+    <p><ol type="A">
+      <li><p>Click the browser's Reload shortcut F5 for one second, release the key and then press F5 quickly again.</p></li>
+      <li><ol type="i">
+        <li><p>Click the browser's Back button (or select the corresponding shortcut on your keyboard) to return to the previous page.</p></li>
+        <li><p>Click the browser's Forward button (or select the corresponding shortcut on your keyboard) to go forward a page.</p></li>
+      </ol></li>
+    </ol></p></li>
+</ol>
+</p>
+<p>The bug is most easily reproduced with a site that resides on the localhost and with the Brave browser, almost without an exception. The bug occurs only sometimes with Chromium and very rarely with Chrome, best caught by using the Reload method. About the other method: If you go back and forth very quickly (on the keyboard), the bug occurs less often. That is easily recognizable with Brave.</p>
+<h2>Symptoms</h2>
+<p>The inner div is not scrolled down to the anchor at the bottom but stays at the top.
+<ul>
+<li><p>Brave:</p><img src="brave.png" alt="Demonstration of the error with Brave" /></li>
+<li><p>Chromium:</p><img src="chromium.png" alt="Demonstration of the error with Chromium" /></li>
+<li><p>Chrome:</p><img src="chrome.png" alt="Demonstration of the error with Chrome" /></li>
+</ul>
+</p>
+<h2>Affected browsers</h2>
+<p>I am consistently able to reproduce this with the following browsers.
+<ul>
+  <li><strong>Ubuntu 20.04, Brave</strong> Version 1.21.77 Chromium: 89.0.4389.90 (Official Build) (64-bit)</li>
+  <li><strong>Ubuntu 20.04, Chromium</strong> Version 84.0.4147.105 (Official Build) Built on Ubuntu , running on Ubuntu 20.04 (64-bit)</li>
+  <li><strong>Ubuntu 20.04, Chrome</strong> Version 89.0.4389.90 (Official Build) (64-bit).</li>
+  <li><strong>Android 8.1.0, Brave</strong> 1.20.108, Chromium 88.0.4324.182</li>
+  <li><strong>Android 8.1.0, Chrome</strong> 88.0.4324.181</li>
+</ul></p>
+</body></html>
